@@ -7,6 +7,9 @@ import JasmineSidetreeErrorValidator from '../JasmineSidetreeErrorValidator';
 import KeyUsage from '../../lib/core/versions/latest/KeyUsage';
 import Multihash from '../../lib/core/versions/latest/Multihash';
 
+declare const JSON: any;
+JSON.canonicalize = require('canonicalize');
+
 describe('DID', async () => {
   describe('create()', async () => {
     it('should create a short-form DID succssefully.', async () => {
@@ -23,20 +26,37 @@ describe('DID', async () => {
 
     it('should create a long-form DID succssefully.', async () => {
       // Create an original DID Document.
-      const [recoveryPublicKey] = await Cryptography.generateKeyPairHex('#key1', KeyUsage.recovery);
-      const [signingPublicKey] = await Cryptography.generateKeyPairHex('#key1', KeyUsage.signing);
+      const [recoveryPublicKey] = await Cryptography.generateKeyPairHex(
+        '#key1',
+        KeyUsage.recovery
+      );
+      const [signingPublicKey] = await Cryptography.generateKeyPairHex(
+        '#key1',
+        KeyUsage.signing
+      );
       const originalDidDocument = {
         '@context': 'https://w3id.org/did/v1',
         publicKey: [recoveryPublicKey, signingPublicKey]
       };
-      const encodedOriginalDidDocument = Encoder.encode(JSON.stringify(originalDidDocument));
+      const encodedOriginalDidDocument = Encoder.encode(
+        JSON.canonicalize(originalDidDocument)
+      );
       const hashAlgorithmInMultihashCode = 18;
-      const documentHash = Multihash.hash(Buffer.from(encodedOriginalDidDocument), hashAlgorithmInMultihashCode);
+      const documentHash = Multihash.hash(
+        Buffer.from(encodedOriginalDidDocument),
+        hashAlgorithmInMultihashCode
+      );
       const expectedDidMethodName = 'did:sidetree:';
-      const longFormDid = Did.createLongFormDidString(expectedDidMethodName, originalDidDocument, hashAlgorithmInMultihashCode);
+      const longFormDid = Did.createLongFormDidString(
+        expectedDidMethodName,
+        originalDidDocument,
+        hashAlgorithmInMultihashCode
+      );
       const did = Did.create(longFormDid, expectedDidMethodName);
 
-      const expectedEncodedDidDocument = Encoder.encode(JSON.stringify(originalDidDocument));
+      const expectedEncodedDidDocument = Encoder.encode(
+        JSON.canonicalize(originalDidDocument)
+      );
       const expectedUniqueSuffix = Encoder.encode(documentHash);
       const expectedShortFormDid = expectedDidMethodName + expectedUniqueSuffix;
       expect(did.didMethodName).toEqual(expectedDidMethodName);
@@ -48,7 +68,11 @@ describe('DID', async () => {
 
     it('should throw if DID given does not match the expected DID method name.', async () => {
       JasmineSidetreeErrorValidator.expectSidetreeErrorToBeThrown(
-        () => Did.create('did:sidetree:EiAgE-q5cRcn4JHh8ETJGKqaJv1z2OgjmN3N-APx0aAvHg', 'did:sidetree2:'),
+        () =>
+          Did.create(
+            'did:sidetree:EiAgE-q5cRcn4JHh8ETJGKqaJv1z2OgjmN3N-APx0aAvHg',
+            'did:sidetree2:'
+          ),
         ErrorCode.DidIncorrectPrefix
       );
     });
@@ -64,14 +88,23 @@ describe('DID', async () => {
       // Create an original DID Document.
       let recoveryPublicKey: DidPublicKeyModel;
       let signingPublicKey: DidPublicKeyModel;
-      [recoveryPublicKey] = await Cryptography.generateKeyPairHex('#key1', KeyUsage.recovery);
-      [signingPublicKey] = await Cryptography.generateKeyPairHex('#key1', KeyUsage.signing);
+      [recoveryPublicKey] = await Cryptography.generateKeyPairHex(
+        '#key1',
+        KeyUsage.recovery
+      );
+      [signingPublicKey] = await Cryptography.generateKeyPairHex(
+        '#key1',
+        KeyUsage.signing
+      );
       const originalDidDocument = {
         '@context': 'https://w3id.org/did/v1',
         publicKey: [recoveryPublicKey, signingPublicKey]
       };
-      const encodedOriginalDidDocument = Encoder.encode(JSON.stringify(originalDidDocument));
-      const mismatchingShortFormDid = 'did:sidetree:EiAgE-q5cRcn4JHh8ETJGKqaJv1z2OgjmN3N-APx0aAvHg';
+      const encodedOriginalDidDocument = Encoder.encode(
+        JSON.canonicalize(originalDidDocument)
+      );
+      const mismatchingShortFormDid =
+        'did:sidetree:EiAgE-q5cRcn4JHh8ETJGKqaJv1z2OgjmN3N-APx0aAvHg';
       const longFormDid = `${mismatchingShortFormDid};initial-values=${encodedOriginalDidDocument}`;
 
       JasmineSidetreeErrorValidator.expectSidetreeErrorToBeThrown(

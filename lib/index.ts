@@ -1,5 +1,8 @@
 // NOTE: Aliases to classes and interfaces are used for external consumption.
 
+declare const JSON: any;
+JSON.canonicalize = require('canonicalize');
+
 // Core service exports.
 import SidetreeCore from './core/Core';
 import SidetreeConfig from './core/models/Config';
@@ -19,14 +22,9 @@ export {
 import SidetreeBitcoinProcessor from './bitcoin/BitcoinProcessor';
 import { IBitcoinConfig as ISidetreeBitcoinConfig } from './bitcoin/IBitcoinConfig';
 
-export {
-  ISidetreeBitcoinConfig,
-  SidetreeBitcoinProcessor
-};
+export { ISidetreeBitcoinConfig, SidetreeBitcoinProcessor };
 
 // IPFS service exports.
 import SidetreeIpfsService from './ipfs/RequestHandler';
 
-export {
-  SidetreeIpfsService
-};
+export { SidetreeIpfsService };

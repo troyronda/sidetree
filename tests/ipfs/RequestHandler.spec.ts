@@ -3,6 +3,9 @@ import ServiceVersionModel from '../../lib/common/models/ServiceVersionModel';
 import { FetchResultCode } from '../../lib/common/FetchResultCode';
 import { Response, ResponseStatus } from '../../lib/common/Response';
 
+declare const JSON: any;
+JSON.canonicalize = require('canonicalize');
+
 describe('RequestHandler', () => {
   let requestHandler: RequestHandler;
   const maxFileSize = 20000000; // 20MB
@@ -19,7 +22,10 @@ describe('RequestHandler', () => {
     };
 
     const testSidetreeHash: string = '123abc';
-    const fetchedResponse = await requestHandler.handleFetchRequest(testSidetreeHash, maxFileSize);
+    const fetchedResponse = await requestHandler.handleFetchRequest(
+      testSidetreeHash,
+      maxFileSize
+    );
 
     expect(expectedResponse).toEqual(fetchedResponse);
   });
@@ -29,10 +35,19 @@ describe('RequestHandler', () => {
       status: ResponseStatus.Succeeded,
       body: Buffer.from('dummyContent')
     };
-    const testSidetreeHash: string = 'EiCcvAfD-ZFyWDajqipYHKICkZiqQgudmbwOEx2fPiy-Rw';
-    spyOn(requestHandler.ipfsStorage, 'read').and.returnValue(Promise.resolve({ code: FetchResultCode.Success, content: Buffer.from('dummyContent') }));
+    const testSidetreeHash: string =
+      'EiCcvAfD-ZFyWDajqipYHKICkZiqQgudmbwOEx2fPiy-Rw';
+    spyOn(requestHandler.ipfsStorage, 'read').and.returnValue(
+      Promise.resolve({
+        code: FetchResultCode.Success,
+        content: Buffer.from('dummyContent')
+      })
+    );
 
-    const fetchedResponse = await requestHandler.handleFetchRequest(testSidetreeHash, maxFileSize);
+    const fetchedResponse = await requestHandler.handleFetchRequest(
+      testSidetreeHash,
+      maxFileSize
+    );
 
     expect(expectedResponse).toEqual(fetchedResponse);
   });
@@ -44,10 +59,14 @@ describe('RequestHandler', () => {
     };
 
     // Mock the IPFS storage layer to return a Base58 encoded multihash regardless of content written.
-    spyOn(requestHandler.ipfsStorage, 'write').and.returnValue(Promise.resolve('QmYtUc4iTCbbfVSDNKvtQqrfyezPPnFvE33wFmutw9PBBk'));
+    spyOn(requestHandler.ipfsStorage, 'write').and.returnValue(
+      Promise.resolve('QmYtUc4iTCbbfVSDNKvtQqrfyezPPnFvE33wFmutw9PBBk')
+    );
     const mockSidetreeContent: Buffer = Buffer.from('dummyContent');
 
-    const fetchedResponse = await requestHandler.handleWriteRequest(mockSidetreeContent);
+    const fetchedResponse = await requestHandler.handleWriteRequest(
+      mockSidetreeContent
+    );
 
     expect(expectedResponse).toEqual(fetchedResponse);
   });
@@ -60,11 +79,13 @@ describe('RequestHandler', () => {
 
     const expectedResponse = {
       status: ResponseStatus.Succeeded,
-      body: JSON.stringify(expectedVersion)
+      body: JSON.canonicalize(expectedVersion)
     };
 
     // Make the handle service version call return the test value
-    spyOn(requestHandler['serviceInfo'], 'getServiceVersion').and.returnValue(expectedVersion);
+    spyOn(requestHandler['serviceInfo'], 'getServiceVersion').and.returnValue(
+      expectedVersion
+    );
 
     const fetchedResponse = await requestHandler.handleGetVersionRequest();
 
