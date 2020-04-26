@@ -20,26 +20,6 @@ For example:
 
 Deprecated. DO NOT USE.
 
-### publicKeyJwk
-
-A public key in JWK format. A JSON Web Key (JWK) is a JavaScript Object Notation (JSON) data structure that represents a cryptographic key. Read [RFC7517](https://tools.ietf.org/html/rfc7517).
-
-Example:
-
-```json
-{
-  "id": "did:example:123#JUvpllMEYUZ2joO59UNui_XYDqxVqiFLLAJ8klWuPBw",
-  "type": "EcdsaSecp256k1VerificationKey2019",
-  "publicKeyJwk": {
-    "crv": "secp256k1",
-    "kid": "JUvpllMEYUZ2joO59UNui_XYDqxVqiFLLAJ8klWuPBw",
-    "kty": "EC",
-    "x": "dWCvM4fTdeM0KmloF57zxtBPXTOythHPMm1HCLrdd3A",
-    "y": "36uMVGM7hnw-N6GnjFcihWE3SkrhMLzzLCdPMXPEXlA"
-  }
-}
-```
-
 ### publicKeyHex
 
 A hex encoded compressed public key.
