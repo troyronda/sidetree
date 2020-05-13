@@ -1,10 +1,12 @@
 openapi: 3.0.0
 # Added by API Auto Mocking Plugin
 servers:
-  - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/sidetree/0.0.1
+  - description: TrustBloc Testnet (sandbox)
+    url: https://testnet.trustbloc.dev/sidetree/0.0.1
+  - description: TrustBloc Local
+    url: https://testnet.trustbloc.local/sidetree/0.0.1
 info:
-  description: This is an experimental Open API Specification for the Sidetree Protocol.
+  description: This is the Open API Specification for the Sidetree Protocol on Hyperledger Fabric.
   version: "0.0.1"
   title: Sidetree REST API
 tags:
@@ -53,7 +55,6 @@ paths:
           schema:
             type: string
           description: A DID to resolve
-          example: "did:sidetree:EiAC2jrPmjaLI4xMiHTGWaKK29HmU9USFWA22lYc6CV0Bg?-sidetree-initial-state=eyJ0eXBlIjoiY3JlYXRlIiwic3VmZml4RGF0YSI6ImV5SnZjR1Z5WVhScGIyNUVZWFJoU0dGemFDSTZJa1ZwUW13Mk9IUktSRFp3YmxadVdHWTFURUZqY1VGWWJsRkhOR2syY2xKSGVuUmZlazEzYXpkaFZWUTBlVUVpTENKeVpXTnZkbVZ5ZVV0bGVTSTZleUp3ZFdKc2FXTkxaWGxJWlhnaU9pSXdNalE0WkRWaFlUbGxZamxqWVdZNE5EWmhNalZoTkRReE1qbGlPR013TURBek9HUTFObVJsTlROaVptTTNZbUU1TkRneU1tRTFNV1ZpTUdabU1EazNNbU1pZlN3aWJtVjRkRkpsWTI5MlpYSjVUM1J3U0dGemFDSTZJa1ZwUTI5aU5YZFZkMEV5U0VObVRGUjZjbmRHZG14b2JVSm5TRnB0ZEVsZmRXVXhNa1JuWHpsVlkxOXdlR2NpZlEiLCJvcGVyYXRpb25EYXRhIjoiZXlKdVpYaDBWWEJrWVhSbFQzUndTR0Z6YUNJNklrVnBSSEZMVDJ0ZlRsZHVZMkZrT0RJelYySm9WVGwyZUVwcmQwVnVTVFZHUlVNeU0xbDViRE5rUlZnNWJtY2lMQ0prYjJOMWJXVnVkQ0k2ZXlKQVkyOXVkR1Y0ZENJNkltaDBkSEJ6T2k4dmR6TnBaQzV2Y21jdlpHbGtMM1l4SWl3aWNIVmliR2xqUzJWNUlqcGJleUpwWkNJNklpTnphV2R1YVc1blMyVjVJaXdpZEhsd1pTSTZJbE5sWTNBeU5UWnJNVlpsY21sbWFXTmhkR2x2Ymt0bGVUSXdNVGdpTENKMWMyRm5aU0k2SW5OcFoyNXBibWNpTENKd2RXSnNhV05MWlhsSVpYZ2lPaUl3TTJKa01HVTBOREF3TlRKaU9UUXlaVE13T0dJNVptUXdPR1JpTWpsaFltTTRaRFl6TmpZNE5ESXpNMkZsT0Raa09Ea3lZVEk1WmpCak5qRTJabVV3TldVaWZWMHNJbk5sY25acFkyVWlPbHQ3SW1sa0lqb2lTV1JsYm5ScGRIbElkV0lpTENKMGVYQmxJam9pU1dSbGJuUnBkSGxJZFdJaUxDSnpaWEoyYVdObFJXNWtjRzlwYm5RaU9uc2lRR052Ym5SbGVIUWlPaUp6WTJobGJXRXVhV1JsYm5ScGRIa3VabTkxYm1SaGRHbHZiaTlvZFdJaUxDSkFkSGx3WlNJNklsVnpaWEpUWlhKMmFXTmxSVzVrY0c5cGJuUWlMQ0pwYm5OMFlXNWpaWE1pT2xzaVpHbGtPbk5wWkdWMGNtVmxPblpoYkhWbE1DSmRmWDFkZlgwIn0"
       responses:
         '200':
           description: Success
@@ -96,9 +97,8 @@ paths:
     get:
       tags:
         - Blockchain
-      summary: Gets the latest logical blockchain time. This API allows the Observer and Batch Writer to determine protocol version to be used.
+      summary: Gets the latest logical blockchain time.
       operationId: getTime
-      description: A blockchain time hash must not be predictable/pre-computable, a canonical implementation would be to use the block number as the time and the block hash as the time hash. It is intentional that the concepts related to blockchain blocks are hidden from the layers above.
       responses:
         '200':
           description: Success
@@ -118,9 +118,8 @@ paths:
     get:
       tags:
         - Blockchain
-      summary: Gets the latest logical blockchain time. This API allows the Observer and Batch Writer to determine protocol version to be used.
+      summary: Gets the logical blockchain time from the associated hash.
       operationId: getTimeByHash
-      description: A blockchain time hash must not be predictable/pre-computable, a canonical implementation would be to use the block number as the time and the block hash as the time hash. It is intentional that the concepts related to blockchain blocks are hidden from the layers above.
       parameters:
         - in: path
           required: true
@@ -144,52 +143,6 @@ paths:
           description: Not Found
         '500':
           description: Server Error
-    post:
-      tags:
-        - Blockchain
-      summary: Writes a Sidetree transaction to the underlying blockchain.
-      operationId: writeBlockchainTransaction
-      parameters:
-        - in: body
-          schema:
-            $ref: '#/components/schemas/BlockchainWriteRequest'
-      responses:
-        '200':
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BlockchainTransaction'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - type: object
-                    properties:
-                      code: 
-                        type: string
-                        const: "spending_cap_per_period_reached"
-                        description: If with the given fee (derived from minimumFee) this node will exceed the spending limit as configured in the parameters.
-                  - type: object
-                    properties:
-                      code: 
-                        type: string
-                        const: "not_enough_balace_for_write"
-                        description: If the wallet configured in the parameters does not have enough balance to complete the write operation.
-        '401':
-          description: Unauthorized
-        '404':
-          description: Not Found
-        '500':
-          description: Server Error
-          type: object
-          properties:
-            code: 
-              type: string
-              const: "normalized_fee_cannot_be_computed"
-              description: Error while computing the normalized fee.
   /blockchain/transactions:
     get:
       tags:
@@ -252,28 +205,19 @@ paths:
                 "transaction_number": 19,
                 "transaction_time": 545236,
                 "transaction_time_hash": "0000000000000000002352597f8ec45c56ad19994808e982f5868c5ff6cfef2e",
-                "anchor_string": "Qm28BKV9iiM1ZNzMsi3HbDRHDPK5U2DEhKpCYhKk83UPEg",
-                "transaction_fee_paid": 5000,
-                "normalized_transaction_fee": 100,
-                "writer": "0af7eccefa3aaa37421914923b4a2034ed5a0ad0"
+                "anchor_string": "Qm28BKV9iiM1ZNzMsi3HbDRHDPK5U2DEhKpCYhKk83UPEg"
               },
               {
                 "transaction_number": 18,
                 "transaction_time": 545236,
                 "transaction_time_hash": "0000000000000000000054f9719ef6ca646e2503a9c5caac1c6ea95ffb4af587",
-                "anchor_string": "Qmb2wxUwvEpspKXU4QNxwYQLGS2gfsAuAE9LPcn5LprS1nb",
-                "transaction_fee_paid": 30,
-                "normalized_transaction_fee": 10,
-                "writer": "0af7eccefa3aaa37421782523b4a2034ed5a0ad0"
+                "anchor_string": "Qmb2wxUwvEpspKXU4QNxwYQLGS2gfsAuAE9LPcn5LprS1nb"
               },
               {
                 "transaction_number": 16,
                 "transaction_time": 545200,
                 "transaction_time_hash": "0000000000000000000f32c84291a3305ad9e5e162d8cc363420831ecd0e2800",
-                "anchor_string": "QmbBPdjWSdJoQGHbZDvPqHxWqqeKUdzBwMTMjJGeWyUkEzK",
-                "transaction_fee_paid": 50000,
-                "normalized_transaction_fee": 150,
-                "writer": "0af7eccefa3aaa87421782523b4a2034ed5a0ad0"
+                "anchor_string": "QmbBPdjWSdJoQGHbZDvPqHxWqqeKUdzBwMTMjJGeWyUkEzK"
               }
             ]
       responses:
@@ -291,119 +235,6 @@ paths:
           description: Not Found
         '500':
           description: Server Error
-  /blockchain/fee:
-    get:
-      tags:
-        - Blockchain
-      summary: Fetches the normalized transaction fee used for proof-of-fee calculation, given the blockchain time.
-      operationId: getFee
-      responses:
-        '200':
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BlockchainFeeResponse'
-        '400':
-          description: Bad Request
-        '401':
-          description: Unauthorized
-        '404':
-          description: Not Found
-        '500':
-          description: Server Error
-  /blockchain/locks/{lock-identifier}:
-    get:
-      tags:
-        - Blockchain
-      summary: Fetches the lock object used for value-time-lock calculation, given the lock identifier.
-      operationId: getLock
-      parameters:
-        - in: path
-          required: true
-          name: lock-identifier
-          schema:
-            type: string
-          example: "gHasdfasodf23230o0jlk23323"
-      responses:
-        '200':
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BlockchainLock'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - type: object
-                    properties:
-                      code: 
-                        type: string
-                        const: "blockchain_time_out_of_range"
-                        description: Blockchain time given is out of computable range.
-        '401':
-          description: Unauthorized
-        '404':
-          oneof:
-            - type: object
-              properties:
-                code: 
-                  type: string
-                  const: "value_time_lock_not_found"
-                  description:  Lock not found.
-            - type: object
-              properties:
-                code: 
-                  type: string
-                  const: "value_time_lock_in_pending_state"
-                  description:  If there is a lock but is not confirmed on the blockchain yet.
-        '500':
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - type: object
-                    properties:
-                      code: 
-                        type: string
-                        const: "normalized_fee_cannot_be_computed"
-                        description: Error while computing the normalized fee.
-    /blockchain/writerlock:
-      get:
-        tags:
-          - Blockchain
-        operationId: getWriterLock
-        responses:
-          '200':
-            description: Success
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/BlockchainLock'
-          '400':
-            description: Bad Request
-          '401':
-            description: Unauthorized
-          '404':
-            oneof:
-              - type: object
-                properties:
-                  code: 
-                    type: string
-                    const: "value_time_lock_not_found"
-                    description:  Lock not found.
-              - type: object
-                properties:
-                  code: 
-                    type: string
-                    const: "value_time_lock_in_pending_state"
-                    description:  If there is a lock but is not confirmed on the blockchain yet.
-          '500':
-            description: Server Error
     /blockchain/version:
       get:
         tags:
@@ -424,6 +255,124 @@ paths:
             description: Not Found
           '500':
             description: Server Error
+  /blockchain/blocks/{time-hash}:
+    get:
+      tags:
+        - Blockchain
+      summary: Fetches the Fabric block for a blockchain time.
+      parameters:
+        - in: path
+          required: true
+          name: time-hash
+          schema:
+            type: string
+          description: The hash associated with the blockchain time.
+          example: "0000000000000000001bfd6c48a6c3e81902cac688e12c2d87ca3aca50e03fb5"
+        - in: query
+          required: false
+          name: data-encoding
+          schema:
+            type: string
+            enum: [json, base64, base64url]
+          description: The encoding of the block. Defaults to json.
+          example: "base64"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlockchainBlocks'          
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+  /blockchain/blocks:
+    get:
+      tags:
+        - Blockchain
+      summary: Fetches the Fabric block for a blockchain time.
+      parameters:
+        - in: query
+          required: true
+          name: from-time
+          schema:
+            type: number
+          description: The starting time of blocks to fetch.
+          example: 0
+        - in: query
+          required: true
+          name: max-blocks
+          schema:
+            type: number
+          description: The number of blocks to fetch.
+          example: 10
+        - in: query
+          required: false
+          name: data-encoding
+          schema:
+            type: string
+            enum: [json, base64, base64url]
+          description: The encoding of the block. Defaults to json.
+          example: "base64"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlockchainBlocks'          
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error          
+            description: Server Error
+          description: Server Error          
+            description: Server Error
+          description: Server Error          
+  /blockchain/config-block/{time-hash}:
+    get:
+      tags:
+        - Blockchain
+      summary: Fetches the Fabric config block for a blockchain time.
+      parameters:
+        - in: path
+          required: false
+          name: time-hash
+          schema:
+            type: string
+          description: The hash associated with the blockchain time.
+          example: "0000000000000000001bfd6c48a6c3e81902cac688e12c2d87ca3aca50e03fb5"
+        - in: query
+          required: false
+          name: data-encoding
+          schema:
+            type: string
+          description: The encoding of the block.
+          example: "base64"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlockchainBlocks'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
 
   /cas/version:
       get:
@@ -479,12 +428,6 @@ paths:
                   type: string
                   const: "content_exceeds_maximum_allowed_size"
                   description:  Content exceeds maximum allowed size
-            - type: object
-              properties:
-                code: 
-                  type: string
-                  const: "content_not_a_file"
-                  description:  Content not a file
             - type: object
               properties:
                 code: 
@@ -625,23 +568,11 @@ components:
         anchor_string:
           type: string
           description: The string written to the blockchain for this transaction.
-        transaction_fee_paid:
-          type: string
-          description: A number representing the fee paid for this transaction.
-        normalized_transaction_fee:
-          type: string
-          description: A number representing the normalized transaction fee used for proof-of-fee calculation.
-        writer:
-          type: string
-          description: A string representing the writer of the transaction. Used in the value time lock calculations.          
       example: {
         "transaction_number": 89,
         "transaction_time": 545236,
         "transaction_time_hash": "0000000000000000002352597f8ec45c56ad19994808e982f5868c5ff6cfef2e",
-        "anchor_string": "QmWd5PH6vyRH5kMdzZRPBnf952dbR4av3Bd7B2wBqMaAcf",
-        "transaction_fee_paid": 40000,
-        "normalized_transaction_fee": 100,
-        "writer": "0af7eccefa3aaa37421914923b4a2034ed5a0ad0"
+        "anchor_string": "QmWd5PH6vyRH5kMdzZRPBnf952dbR4av3Bd7B2wBqMaAcf"
       }
     CASWriteResponse:
       type: object
@@ -682,68 +613,35 @@ components:
             "transaction_number": 89,
             "transaction_time": 545236,
             "transaction_time_hash": "0000000000000000002352597f8ec45c56ad19994808e982f5868c5ff6cfef2e",
-            "anchor_string": "QmWd5PH6vyRH5kMdzZRPBnf952dbR4av3Bd7B2wBqMaAcf",
-            "transaction_fee_paid": 40000,
-            "normalized_transaction_fee": 100,
-            "writer": "0af7eccefa3aaa37421914923b4a2034ed5a0ad0"
+            "anchor_string": "QmWd5PH6vyRH5kMdzZRPBnf952dbR4av3Bd7B2wBqMaAcf"
           },
           {
             "transaction_number": 100,
             "transaction_time": 545236,
             "transaction_time_hash": "00000000000000000000100158f474719e5a319933856f7f464fcc65a3cb2253",
-            "anchor_string": "QmbJGU4wNti6vNMGMosXaHbeMHGu9PkAUZtVBb2s2Vyq5d",
-            "transaction_fee_paid": 600000,
-            "normalized_transaction_fee": 400,
-            "writer": "0af7eccefa3aaa37421782523b4a2034ed5a0ad0"
+            "anchor_string": "QmbJGU4wNti6vNMGMosXaHbeMHGu9PkAUZtVBb2s2Vyq5d"
           }
         ]
       }
-    BlockchainWriteRequest:
-      type: object
-      description: if with the given fee (derived from minimumFee) this node will exceed the spending limit as configured in the parameters.
-      properties:
-        anchor_string:
-          type: string
-          description: The string to be written to the blockchain for this transaction.
-        minimum_fee:
-          type: string
-          description: A number representing the minimum transaction fee to be paid to write this transaction to the blockchain. The actual fee is dynamically calculated and can be higher than this amount (but not lower).
-      example: {
-        "minimum_fee": 200000,
-        "anchor_string": "QmbJGU4wNti6vNMGMosXaHbeMHGu9PkAUZtVBb2s2Vyq5d"
-      }
-
-    BlockchainFeeResponse:
+    BlockchainBlocks:
       type: object
       properties:
-        normalized_transaction_fee:
+        header: 
+          type: object
+          description: Block header
+          properties:
+            number:
+              type: number
+              description: Block number
+            data_hash:
+              type: string
+              description: Block hash
+            previous_hash:
+              type: string
+              description: Previous block hash
+        data:
           type: string
-          description: A number representing the normalized transaction fee used for proof-of-fee calculation.
-      example: {
-        "normalized_transaction_fee": 200000
-      }
-    BlockchainLock:
-      type: object
-      properties:
-        amount_locked:
-          type: number
-          description: A number representing the amount that was locked.
-        identifier:
-          type: number
-          description: The string representing the identifier of the lock. This is the same value which is passed in the request path.
-        lock_transaction_time:
-          type: number
-          description: A number representing the transaction time at which the lock became active.
-        owner:
+          description: Block data
+        metadata:
           type: string
-          description: A string reprsenting the owner of the lock.
-        unlock_transaction_time:
-          type: string
-          description: A number representing the transaction time at which the lock became inactive.
-      example: {
-        "amount_locked": 1235696,
-        "identifier": "gHasdfasodf23230o0jlk23323",
-        "lock_transaction_time": 167520,
-        "owner": "Hhdofkeio209aanoiyyoiknadfsedsed652",
-        "unlock_transaction_time": 167530
-      }
+          description: Block metadata
